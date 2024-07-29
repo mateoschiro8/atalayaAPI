@@ -1,0 +1,260 @@
+openapi: 3.0.0
+info:
+  version: '1'
+  title: 'Atalaya API'
+  description: 'API de la página web de Atalaya'
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/MATEOSCHIRO8/Atalaya/1
+paths: 
+  /heroes:
+    get:
+      tags: 
+        - Héroes
+      description: Lista los héroes disponibles para contratar. En caso de incluir una fecha, se listan los héroes disponibles en esa fecha
+      parameters: 
+        - $ref: '#/components/parameters/fecha'
+      responses:
+        '200':
+          description: Listado de Héroes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    heroe: 
+                      $ref: '#/components/schemas/heroe'
+                    links:
+                      type: object
+                      description: hypermedia link para obtener la información completa
+                      properties:
+                        info:
+                          $ref: '#/components/schemas/link'
+                        borrar:
+                          $ref: '#/components/schemas/link'
+        '400':
+          description: Hubo un error de validación en la fecha
+    
+    post:
+      tags: 
+        - Héroes
+      description: Agrega un nuevo héroe a la colección
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre del Héroe
+                  example: Batman
+                precio:
+                  type: integer
+                  description: Cantidad de dolares por dia que cobra el héroe
+                  example: 30
+                desc:
+                  type: string
+                  description: Breve descripción del héroe
+                  example: El de la S en el pecho
+                info:
+                  type: string
+                  description: Informacion del héroe
+                  example: Nacido en bla bla sabe hacer bla bla
+              required: [nombre, precio, desc, info]
+      responses:
+        '201':
+          description: El héroe fue correctamente agregado a la colección
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/heroe'
+        '400':
+          description: Hubo un error de validacion con alguno de los datos
+  
+  /heroes/{heroeID}:
+    get:
+      tags: 
+        - Héroes
+      description: Obtener la información extendida de un héroe
+      parameters:
+      - $ref: '#/components/parameters/heroeID'
+      responses:
+        '200':
+          description: La información solicitada
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Nacido en bla bla sabe hacer bla bla
+        '404':
+          description: No se conoce un héroe con tal ID
+    delete:
+      tags: 
+        - Héroes
+      description: Elimina el héroe asociado a esta ID
+      parameters:
+        - $ref: '#/components/parameters/heroeID'
+      responses:
+        '204':
+          description: El héroe fue eliminado
+        '404':
+          description: No se conoce un héroe con tal id  
+  
+  /heroes/{heroeID}/reservas:
+    get:
+      tags:
+        - Reservas
+      description: Obtener las reservas futuras de un héroe
+      parameters:
+      - $ref: '#/components/parameters/heroeID'
+      responses:
+        '200':
+          description: La información solicitada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "22/06/2032"
+        '404':
+          description: No se conoce un héroe con tal ID
+    post:
+      tags: 
+        - Reservas
+      description: Agrega una reserva a un héroe
+      parameters:
+        - $ref: '#/components/parameters/heroeID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              description: Fecha de nueva reserva
+              example: "13/04/1920"
+      responses:
+        '201':
+          description: La reserva fue agregada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fecha:
+                    description: Nueva fecha agregada
+                    type: string
+                    example: "28/10/2018"
+                  links:
+                      type: object
+                      description: hypermedia link para obtener todas las reservas
+                      properties:
+                        reserva:
+                          $ref: '#/components/schemas/link'
+                        borrar:
+                          $ref: '#/components/schemas/link'
+        '400':
+          description: Hubo un error de validacion con alguno de los datos, o la fecha no es válida
+  
+  /heroes/{heroeID}/reservas/{reservaID}:
+    get:  
+      tags: 
+        - Reservas
+      description: Obtiene la información de una reserva
+      parameters:
+        - $ref: '#/components/parameters/heroeID'
+        - $ref: '#/components/parameters/reservaID'
+      responses:
+        '200':
+          description: Informacion de una reserva de un heroe
+          content:
+            application/json:
+              schema:
+                type: object
+                description: hypermedia link para borrar la reserva
+                properties:
+                  borrar:
+                    $ref: '#/components/schemas/link'
+        '400':
+          description: Hubo un error de validación en los parámetros
+    delete:
+      tags: 
+        - Reservas
+      description: Elimina la reserva en la fecha reservaID 
+      parameters:
+        - $ref: '#/components/parameters/heroeID'
+        - $ref: '#/components/parameters/reservaID'
+      responses:
+        '204':
+          description: La reserva fue eliminada
+        '404':
+          description: No se conoce un héroe con tal id o la reserva no estaba hecha 
+          
+components:
+  parameters:
+    fecha:
+      in: query
+      name: fecha
+      description: Fecha en formato DDMMAAAA
+      required: false
+      schema:
+        type: integer
+    heroeID:
+      in: path
+      name: heroeID
+      description: ID de héroe. Nombre sin vocales
+      required: true
+      schema:
+        type: string
+    reservaID:
+      in: path
+      name: reservaID
+      description: ID de reserva. Fecha en formato DDMMAAAA
+      required: true
+      schema:
+        type: integer
+      
+  schemas:
+    heroe:
+      description: Un héroe
+      type: object
+      properties:
+        nombre:
+          type: string
+          description: Nombre del héroe
+          example: Batman
+        id:
+          type: string
+          description: ID unico de cada héroe. Nombre sin vocales
+          example: btmn
+        precio:
+          type: integer
+          description: Cantidad de dolares por dia que cobra el héroe
+          example: 30
+        desc:
+          type: string
+          description: Breve informacion del héroe
+          example: El murcielago
+
+    link:
+      description: un link usado para hypermedia
+      type: object
+      properties:
+        href:
+          type: string
+          format: uri
+          description: la URI del link
+          example: "http://foo.com/bar"
+        verb:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          example: GET
+          description: el verbo a usar en el link
