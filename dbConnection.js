@@ -7,7 +7,7 @@ const pass = process.env.DBPASS;
 
 const uri = `mongodb+srv://${user}:${pass}@cluster0.gtwihqu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-const client = new MongoCient(uri);
+const client = new MongoClient(uri);
 
 async function run() {
   try {
