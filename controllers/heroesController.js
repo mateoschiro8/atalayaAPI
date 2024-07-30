@@ -3,9 +3,19 @@ const heroesService = require("../services/heroesService");
 
 const getHeroes = async (req, res) => {
     const heroes = await heroesService.getHeroes();
-    // console.log("estoy e");
-    // console.log(heroes);
+
     res.status(200).send(heroes);
 };
 
-module.exports = { getHeroes };
+const getHeroePorID = async (req, res) => {
+    const heroeID = req.params.id;
+
+    const infoHeroe = await heroesService.getHeroePorID(heroeID);
+
+    if(!infoHeroe)
+        return res.status(404).send({ message: 'No se conoce un héroe con tal ID' });
+        
+    res.status(200).send({info: infoHeroe.info});
+};
+
+module.exports = {getHeroes, getHeroePorID};

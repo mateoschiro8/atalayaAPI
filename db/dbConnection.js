@@ -1,10 +1,8 @@
 const { MongoClient } = require("mongodb");
 
-const dotenv = require('dotenv').config();
 
 const user = process.env.DBUSER;
 const pass = process.env.DBPASS;
-
 const uri = `mongodb+srv://${user}:${pass}@cluster0.gtwihqu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri);
@@ -30,27 +28,23 @@ async function run() {
         reservas: "foo.com/bar"
       },
     });
-
     */
     const infoID = await infoHeroes.insertOne({
       _id: "btmn",
       info: "Nació en ciudad gotica sabe hacer bla bla"
     });
-    
-
-    
-
     // const result = await heroes.deleteOne(query);
-
     // console.log(result);
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
   }
 }
-run().catch(console.dir);
+// run().catch(console.dir);
 
 async function dbConnect() {
+  
+  
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
@@ -63,6 +57,7 @@ async function dbConnect() {
   }
 }
 
+// dbDisconnect();
 async function dbDisconnect() {
   try {
     await client.close();
