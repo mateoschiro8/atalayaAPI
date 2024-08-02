@@ -1,6 +1,7 @@
 
-const dotenv = require('dotenv').config()
-const app = require("express")(); 
+const dotenv = require('dotenv').config();
+const express = require("express"); 
+const app = express(); 
 
 const heroesRouter = require("./routes/heroesRoutes");
 const {dbConnect, dbDisconnect} = require('./db/dbConnection');
@@ -8,6 +9,8 @@ const {dbConnect, dbDisconnect} = require('./db/dbConnection');
 const PORT = process.env.PORT || 3000; 
 
 dbConnect();
+
+app.use(express.json());
 
 app.use("/heroes", heroesRouter);
 

@@ -22,11 +22,6 @@ async function run() {
       nombre: "Batman",
       precio: 80,
       desc: "El muerciélago",
-      links: {
-        info: "foo.com/bar",
-        borrar: "foo.com/bar",
-        reservas: "foo.com/bar"
-      },
     });
     */
     const infoID = await infoHeroes.insertOne({

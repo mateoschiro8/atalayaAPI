@@ -5,9 +5,10 @@ const {client, dbDisconnect} = require("../db/dbConnection.js");
 afterAll((done) => {
     server.close(done);
     dbDisconnect();
+    console.log("HEROEs");
 });
 
-describe('Información de heroes', () => {
+describe('Heroes', () => {
 
     describe('HeroesGET sin fecha', () => { 
         let response;
@@ -30,7 +31,6 @@ describe('Información de heroes', () => {
                 expect(obj).toHaveProperty('nombre');
                 expect(obj).toHaveProperty('precio');
                 expect(obj).toHaveProperty('desc');
-                expect(obj).toHaveProperty('links');
                 expect(obj.links).toHaveProperty('info');
                 expect(obj.links).toHaveProperty('borrar');
                 expect(obj.links).toHaveProperty('reservas');
@@ -45,17 +45,48 @@ describe('Información de heroes', () => {
             const response = await request(app).get("/heroes/btmn").send();
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('info');
-        })
+        });
 
         test('GET con id no existente devuelve 404', async () =>{
             const response = await request(app).get("/heroes/idnoexistente").send();
             expect(response.statusCode).toBe(404);
             expect(response.body.message).toBe('No se conoce un héroe con tal ID');
-        })
+        });
 
-        test.todo('DELETE con id existente devuelve 204 y borra');
+        test('POST con parámetros correctos devuelve 201', async () => {
+            const response = await request(app).post("/heroes").send(
+                {
+                    "nombre": "TESTMAN",
+                    "precio": 100,
+                    "desc": "El que se usa para testear",
+                    "info": "No sabe hacer nada"
+                });
+            expect(response.statusCode).toBe(201);
+        });
+
         
-        test.todo('DELETE con id no existente devuelve 404');
+        test('POST sin parametros correctos devuelve 400', async () => {
+            const response = await request(app).post("/heroes").send(
+                {
+                    "nombre": "TESTMAN pero sin parámetros",
+                });
+            expect(response.statusCode).toBe(400);
+        });
+        
+        test('DELETE con id existente devuelve 204 y borra', async () => {
+            const responseDelete = await request(app).delete("/heroes/tstmn").send();
+            expect(responseDelete.statusCode).toBe(204);
+            
+            const responseGetDelDelete = await request(app).get("/heroes/tstmn").send();
+            expect(responseGetDelDelete.statusCode).toBe(404);
+
+        });
+        
+        test('DELETE con id no existente devuelve 404', async () =>{
+            const response = await request(app).delete("/heroes/idnoexistente").send();
+            expect(response.statusCode).toBe(404);
+            expect(response.body.message).toBe('No se conoce un héroe con tal ID');
+        });
 
     })
 });
