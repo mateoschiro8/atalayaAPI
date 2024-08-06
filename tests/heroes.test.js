@@ -22,10 +22,9 @@ describe('Heroes', () => {
         });
         
         test('Campos id, nombre, precio y links presentes', async () => {
-            // Verifica que el cuerpo de la respuesta sea un array
+            
             expect(Array.isArray(response.body)).toBe(true);
     
-            // Verifica que cada objeto en el array tenga los atributos id, tipo y nombre
             response.body.forEach(obj => {
                 expect(obj).toHaveProperty('_id');
                 expect(obj).toHaveProperty('nombre');
@@ -95,9 +94,25 @@ describe('Reservas', () => {
 
     describe('GET de reservas', () => {
 
-        test.todo('Con ID válido devuelve 200 y array de reservas');
+        test('Con ID válido devuelve 200 y array de reservas', async () => {
 
-        test.todo('Con ID inválido devuelve 404');
+            const response = await request(app).get("/heroes/tstmn/reservas").send();
+
+            expect(Array.isArray(response.body)).toBe(true);
+            response.body.forEach(obj => {
+                expect(new Date(obj) instanceof Date).toBe(true);
+            });
+
+            expect(response.statusCode).toBe(200);
+
+        });
+
+        test('Con ID inválido devuelve 404', async () => {
+
+            const response = await request(app).get("/heroes/idnoexistente/reservas").send();
+
+            expect(response.statusCode).toBe(404);
+        });
 
     });
 

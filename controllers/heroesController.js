@@ -38,7 +38,7 @@ const deleteHeroePorID = async (req, res) => {
     if(!infoHeroe)
         return res.status(404).send({message: 'No se conoce un héroe con tal ID'});
 
-    const heroeDeleted = await heroesService.deleteHeroePorID(req.params.id);
+    await heroesService.deleteHeroePorID(req.params.id);
 
     res.status(204).send();
 }
